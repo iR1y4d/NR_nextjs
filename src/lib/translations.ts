@@ -6,7 +6,7 @@ export const translations: Translations = {
   nav_about: { en: 'About Us', ar: 'من نحن' },
   nav_services: { en: 'Services', ar: 'خدماتنا' },
   nav_products: { en: 'Products', ar: 'المنتجات' },
-  nav_partners: { en: 'Partners', ar: 'شركاؤنا' },
+  nav_partners: { en: 'Why Al-Marj?', ar: 'لماذا المرج؟' },
   nav_contact: { en: 'Contact Us', ar: 'اتصل بنا' },
 
   // Hero Section
