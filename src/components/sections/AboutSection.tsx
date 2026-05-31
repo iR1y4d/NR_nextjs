@@ -41,7 +41,7 @@ export function AboutSection() {
                   <Award className="w-7 h-7 text-blue-600" />
                 </div>
                 <div className="ml-4 rtl:mr-4 rtl:ml-0">
-                  <p className="text-3xl font-bold text-slate-800">10+</p>
+                  <p className="text-3xl font-bold text-slate-800">15+</p>
                   <p className="text-slate-600 text-sm">
                     {language === 'en' ? 'Years Experience' : 'سنوات الخبرة'}
                   </p>
