@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/NR_nextjs',
+  // basePath: '/NR_nextjs',
   images: {
     unoptimized: true,
     remotePatterns: [

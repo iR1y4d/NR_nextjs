@@ -64,8 +64,17 @@ export function ContactSection() {
             </motion.div>
 
             {/* Map */}
+            {/* Map */}
             <motion.div variants={fadeInUp} className="mt-8">
-              <div className="bg-slate-200 rounded-2xl h-64 flex items-center justify-center">
+              <div className="relative w-full h-64 rounded-2xl overflow-hidden shadow">
+                  <iframe
+                    src="https://maps.google.com/maps?q=32.48538231156976, 20.831425094790056&z=15&output=embed"
+                    className="absolute inset-0 w-full h-full"
+                    loading="lazy"
+                  />
+              </div>
+            </motion.div>
+              {/* <div className="bg-slate-200 rounded-2xl h-64 flex items-center justify-center">
                 <div className="text-center">
                   <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-2" />
                   <p className="text-slate-600 font-medium">
@@ -75,14 +84,14 @@ export function ContactSection() {
                     {language === 'en' ? 'Embed your map here' : 'ضع خريطتك هنا'}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
 
             {/* Social Links */}
             <motion.div variants={fadeInUp} className="flex gap-4 pt-4 flex-wrap">
               <SocialLinks variant="contact" />
             </motion.div>
-          </motion.div>
+
         </div>
       </div>
     </section>

@@ -30,9 +30,9 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <img
-              src={isScrolled ? '/NR_nextjs/favicon.svg' : '/NR_nextjs/faviconw.webp'}
+              src={isScrolled ? '/favicon.svg' : '/faviconw.webp'}
               alt="VetMed Logo"
-              className="w-12 h-12 object-contain"
+              className="size-17 object-contain"
             />
           </div>
 

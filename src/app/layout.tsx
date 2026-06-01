@@ -22,9 +22,9 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: 'VetMed Imports - Veterinary Equipment & Medicines',
+  title: 'شركة الركيزة الجديدة | AL Rakiza AL Jadida Company',
   description:
-    'VetMed Imports - Your trusted partner in veterinary equipment and medicines. We specialize in importing high-quality veterinary products for clinics, hospitals, and farms.',
+    'Al Rakiza AL Jadida Company – Integrated Veterinary Solutions. شركة الركيزة الجديدة - حلول بيطرية متكاملة.',
   keywords:
     'veterinary equipment, veterinary medicines, animal health, vet supplies, pet care, veterinary imports',
   authors: [{ name: 'VetMed Imports' }],

@@ -93,15 +93,70 @@ export const translations: Translations = {
   product_supplements: { en: 'Supplements', ar: 'مكملات غذائية' },
   product_farm: { en: 'Farm Animal Products', ar: 'منتجات حيوانات المزرعة' },
 
-  // Partners Section
-  partners_title: { en: 'Our Partners', ar: 'شركاؤنا' },
-  partners_subtitle: {
-    en: 'We Collaborate with Trusted International Manufacturers',
-    ar: 'نتعاون مع مصنعين دوليين موثوقين',
-  },
+  // Partners / Why Al-Marj Section — header
+  partners_badge: { en: 'The New Pillar', ar: 'الركيزة الجديدة' },
+  partners_heading: { en: 'Why Al-Marj City?', ar: 'لماذا مدينة المرج؟' },
   partners_description: {
-    en: 'We partner with leading pharmaceutical companies and equipment manufacturers worldwide to bring you the best veterinary products available.',
-    ar: 'نتعاون مع شركات الأدوية الرائدة ومصنعي المعدات في جميع أنحاء العالم لتقديم أفضل المنتجات البيطرية المتاحة.',
+    en: 'Al-Rakiza Al-Jadida operates from a clear strategic vision aimed at bridging the gap between vast pastoral potential and available services, with Al-Marj as the launchpad and hub for its integrated veterinary services.',
+    ar: 'تنطلق شركة الركيزة الجديدة من رؤية استراتيجية واضحة تهدف إلى سد الفجوة بين الإمكانات الرعوية الضخمة ومستوى الخدمات المتاحة، مرتكزةً على المرج نقطةً للانطلاق ومحوراً لخدماتها البيطرية المتكاملة.',
+  },
+
+  // Partners Section — CTA strip
+  partners_cta_title: {
+    en: 'We Are Here Because Al-Marj Deserves the Best',
+    ar: 'نحن هنا لأن المرج تستحق الأفضل',
+  },
+  partners_cta_desc: {
+    en: 'At "Al-Rakiza Al-Jadida" we strive to transform the region from an underserved area into a model for comprehensive veterinary care at the national level.',
+    ar: 'نسعى في "الركيزة الجديدة" إلى تحويل المنطقة من منطقة تفتقر إلى الخدمات إلى نموذج يُحتذى به في تقديم الرعاية البيطرية الشاملة على المستوى الوطني.',
+  },
+
+  // Pillar 1 — Strategic Location
+  pillar1_badge: { en: 'Strategic Location', ar: 'الموقع الاستراتيجي' },
+  pillar1_title: { en: 'Heart of Seasonal Migration', ar: 'قلب الهجرة الموسمية' },
+  pillar1_point1: {
+    en: 'Al-Marj is one of the richest regions in livestock wealth, yet it suffers from a severe shortage of advanced veterinary services.',
+    ar: 'تُعد مدينة المرج من أغنى المناطق بالثروة الحيوانية، وتعاني في الوقت ذاته نقصاً حاداً في الخدمات البيطرية المتقدمة.',
+  },
+  pillar1_point2: {
+    en: "Al-Marj represents Libya's largest livestock migration corridor for most of the year (March–October), requiring proactive veterinary intervention to protect national food security.",
+    ar: 'تُمثّل المرج المسار الأكبر لهجرة القطعان في ليبيا طوال النصف الأكبر من العام (مارس–أكتوبر)، مما يستوجب تدخلاً بيطرياً استباقياً يحمي الأمن الغذائي الوطني.',
+  },
+
+  // Pillar 2 — Field Care
+  pillar2_badge: { en: 'Field Care', ar: 'الرعاية الحقلية' },
+  pillar2_title: { en: 'Reaching the Breeder System', ar: 'منظومة الوصول إلى المربّي' },
+  pillar2_point1: {
+    en: "We don't wait for cases to come to us — our specialized mobile veterinary teams reach breeders in their fields and farms for regular follow-ups and immediate treatment.",
+    ar: 'لا ننتظر قدوم الحالات؛ فرقنا البيطرية المتخصصة والمتحركة تصل إلى المربين في حقولهم ومزارعهم لتقديم المتابعة الدورية والخدمات العلاجية الفورية.',
+  },
+  pillar2_point2: {
+    en: 'Our staff are qualified to handle large animals (ruminants), poultry, and companion animals — comprehensive service with no exceptions.',
+    ar: 'كوادرنا مؤهلة للتعامل مع الحيوانات الكبيرة (المجترات)، وقطاع الدواجن، والحيوانات الأليفة — خدمة شاملة بلا استثناء.',
+  },
+
+  // Pillar 3 — Advanced Diagnostics
+  pillar3_badge: { en: 'Advanced Diagnostics', ar: 'التشخيص المتقدم' },
+  pillar3_title: { en: 'Technology & Our Future Vision', ar: 'التكنولوجيا ورؤيتنا المستقبلية' },
+  pillar3_point1: {
+    en: 'A fully integrated veterinary laboratory in Al-Marj city for early disease detection and accurate analyses as quickly as possible.',
+    ar: 'مختبر بيطري متكامل في مدينة المرج للكشف المبكر عن الأمراض وإجراء التحاليل الدقيقة في أسرع وقت ممكن.',
+  },
+  pillar3_point2: {
+    en: 'Advanced imaging services: X-Ray and Ultrasound within a region that previously had none.',
+    ar: 'خدمات تصوير متقدمة: أشعة سينية (X-Ray) وأجهزة سونار (Ultrasound) داخل المنطقة التي كانت تفتقر إليها تماماً.',
+  },
+
+  // Pillar 4 — International Partnerships
+  pillar4_badge: { en: 'International Partnerships', ar: 'الشراكات الدولية' },
+  pillar4_title: { en: 'Knowledge Transfer & Global Standards', ar: 'نقل المعرفة والمعايير العالمية' },
+  pillar4_point1: {
+    en: 'We host international experts and scientific visits from top global companies with which we have formed strategic partnerships, to elevate the level of local staff.',
+    ar: 'نستضيف خبراء دوليين وزيارات علمية من كبرى الشركات العالمية التي عقدنا معها شراكات استراتيجية، لرفع مستوى الكوادر المحلية.',
+  },
+  pillar4_point2: {
+    en: 'We import the finest veterinary medicines and equipment according to the highest international standards, keeping pace with the latest scientific advances in poultry, livestock, and companion animal treatment.',
+    ar: 'نستورد أجود الأدوية والمعدات البيطرية وفق أعلى المعايير الدولية، مواكبةً لأحدث ما توصّل إليه العلم في مجال علاج الدواجن والمواشي والحيوانات الأليفة.',
   },
 
   // Contact Section
@@ -130,8 +185,8 @@ export const translations: Translations = {
   whatsapp_label: { en: 'WhatsApp', ar: 'واتساب' },
 
   address_value: {
-    en: '123 Veterinary District, Medical City, Country',
-    ar: '١٢٣ حي البيطري، المدينة الطبية، الدولة',
+    en: ' Al-Marj, Libya',
+    ar: 'مدينة المرج, سوق الجمهورية, الشارع الفرعي',
   },
 
   // CTA Section

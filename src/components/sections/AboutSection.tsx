@@ -24,7 +24,7 @@ export function AboutSection() {
           <motion.div variants={scaleIn} className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/NR_nextjs/images/sheep.jpg"
+                src="/images/sheep.jpg"
                 alt="Veterinary professional"
                 className="w-full h-[500px] object-cover"
               />
@@ -51,7 +51,7 @@ export function AboutSection() {
           </motion.div>
 
           {/* Content Side */}
-          <motion.div variants={staggerContainer} className="space-y-8">
+          <motion.div variants={staggerContainer} className="space-y-8 text-center sm:text-left ">
             <motion.div variants={fadeInUp}>
               <span className="text-blue-600 font-semibold text-sm tracking-wider uppercase">
                 {t('about_title')}

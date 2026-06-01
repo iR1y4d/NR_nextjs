@@ -50,16 +50,16 @@ export function Footer() {
             <h4 className="text-lg font-semibold mb-4">{t('footer_contact')}</h4>
             <ul className="space-y-3 text-slate-400 text-sm">
               <li>
-                <a href="tel:+12345678900" className="hover:text-white transition-colors block">
-                  +1 234 567 8900
+                <a href="tel:+218916110593" className="hover:text-white transition-colors block">
+                  <span dir="ltr">+218 91 6110593</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@vetmedimports.com"
+                  href="mailto:info@Rakiza-vet.ly"
                   className="hover:text-white transition-colors block"
                 >
-                  info@vetmedimports.com
+                  info@Rakiza-vet.ly
                 </a>
               </li>
               <li>

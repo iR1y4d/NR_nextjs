@@ -17,8 +17,11 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  FlaskConical,
+  ShieldCheck,
+  Handshake,
 } from 'lucide-react';
-import type { Service, Product, Partner, ContactItem, SocialLink, WhyChooseUsItem } from '@/types';
+import type { Service, Product, Partner, ContactItem, SocialLink, WhyChooseUsItem, Pillar } from '@/types';
 
 // Navigation items
 export const navItems = [
@@ -100,7 +103,7 @@ export const products: Product[] = [
   {
     icon: Warehouse,
     title: 'product_farm',
-    image: '/NR_nextjs/images/cow.jpg',
+    image: '/images/cow.jpg',
     description: {
       en: 'Specialized products for farm animals and livestock',
       ar: 'منتجات متخصصة لحيوانات المزرعة والماشية',
@@ -125,26 +128,26 @@ export const contactItems: ContactItem[] = [
   {
     icon: Phone,
     label: 'phone_label',
-    value: '+1 234 567 8900',
-    href: 'tel:+12345678900',
+    value: '+218 91 6110593',
+    href: 'tel:+218916110593',
   },
   {
     icon: Mail,
     label: 'email_label',
-    value: 'info@vetmedimports.com',
-    href: 'mailto:info@vetmedimports.com',
+    value: 'info@Rakiza-vet.ly',
+    href: 'mailto:info@Rakiza-vet.ly',
   },
   {
     icon: MapPin,
     label: 'address_label',
     value: 'address_value',
-    href: 'https://maps.google.com/?q=Veterinary+District+Medical+City',
+    href: 'https://maps.app.goo.gl/uewWGX2pXT8V2rp7A',
   },
   {
     icon: MessageCircle,
     label: 'whatsapp_label',
-    value: '+1 234 567 8900',
-    href: 'https://wa.me/12345678900',
+    value: '+218 91 6110593',
+    href: 'https://wa.me/218916110593',
   },
 ];
 
@@ -180,4 +183,60 @@ export const whyChooseUsItems: WhyChooseUsItem[] = [
   { icon: Award, key: 'why_pricing', color: 'emerald' },
   { icon: Clock, key: 'why_support', color: 'blue' },
   { icon: Users, key: 'why_expertise', color: 'emerald' },
+];
+
+// Pillars data (Why Al-Marj section)
+export const pillars: Pillar[] = [
+  {
+    id: 1,
+    icon: MapPin,
+    color: 'from-blue-500 to-blue-700',
+    bg: 'bg-blue-50',
+    iconBg: 'bg-blue-600',
+    badgeKey: 'pillar1_badge',
+    titleKey: 'pillar1_title',
+    points: [
+      { icon: ShieldCheck, textKey: 'pillar1_point1' },
+      { icon: Truck,       textKey: 'pillar1_point2' },
+    ],
+  },
+  {
+    id: 2,
+    icon: Truck,
+    color: 'from-emerald-500 to-emerald-700',
+    bg: 'bg-emerald-50',
+    iconBg: 'bg-emerald-600',
+    badgeKey: 'pillar2_badge',
+    titleKey: 'pillar2_title',
+    points: [
+      { icon: Stethoscope, textKey: 'pillar2_point1' },
+      { icon: ShieldCheck, textKey: 'pillar2_point2' },
+    ],
+  },
+  {
+    id: 3,
+    icon: FlaskConical,
+    color: 'from-violet-500 to-violet-700',
+    bg: 'bg-violet-50',
+    iconBg: 'bg-violet-600',
+    badgeKey: 'pillar3_badge',
+    titleKey: 'pillar3_title',
+    points: [
+      { icon: Microscope,  textKey: 'pillar3_point1' },
+      { icon: ShieldCheck, textKey: 'pillar3_point2' },
+    ],
+  },
+  {
+    id: 4,
+    icon: Globe,
+    color: 'from-amber-500 to-orange-600',
+    bg: 'bg-amber-50',
+    iconBg: 'bg-amber-600',
+    badgeKey: 'pillar4_badge',
+    titleKey: 'pillar4_title',
+    points: [
+      { icon: Handshake,   textKey: 'pillar4_point1' },
+      { icon: ShieldCheck, textKey: 'pillar4_point2' },
+    ],
+  },
 ];

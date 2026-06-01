@@ -25,7 +25,7 @@ export function ContactInfoItem({ icon: Icon, label, value, href }: ContactInfoI
       <div>
         <p className="text-sm text-slate-500">{label}</p>
         <p className="text-lg font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
-          {value}
+          <span dir="ltr">{value}</span>
         </p>
       </div>
     </a>
