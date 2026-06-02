@@ -88,7 +88,7 @@ export function ContactSection() {
             </motion.div>
 
             {/* Social Links */}
-            <motion.div variants={fadeInUp} className="flex gap-4 pt-4 flex-wrap">
+            <motion.div variants={fadeInUp} className="flex gap-4 pt-4 flex-wrap max-md:justify-center">
               <SocialLinks variant="contact" />
             </motion.div>
 

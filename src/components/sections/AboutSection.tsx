@@ -52,11 +52,11 @@ export function AboutSection() {
 
           {/* Content Side */}
           <motion.div variants={staggerContainer} className="space-y-8 text-center sm:text-left ">
-            <motion.div variants={fadeInUp}>
+            <motion.div variants={fadeInUp} className="text-center">
               <span className="text-blue-600 font-semibold text-sm tracking-wider uppercase">
                 {t('about_title')}
               </span>
-              <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mt-3 leading-tight">
+              <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mt-3 leading-tight ">
                 {t('about_subtitle')}
               </h2>
             </motion.div>
@@ -66,7 +66,7 @@ export function AboutSection() {
             </motion.p>
 
             {/* Mission & Vision */}
-            <motion.div variants={fadeInUp} className="grid sm:grid-cols-2 gap-6">
+            <motion.div variants={fadeInUp} className="grid sm:grid-cols-2 gap-6 text-start">
               <div className="bg-blue-50 rounded-2xl p-6">
                 <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
                   <Heart className="w-6 h-6 text-white" />

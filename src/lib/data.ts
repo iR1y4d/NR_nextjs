@@ -76,7 +76,7 @@ export const products: Product[] = [
   {
     icon: HeartPulse,
     title: 'product_surgical',
-    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1564732278233-674355414c2c?w=600&h=400&fit=crop',
     description: {
       en: 'High-quality surgical instruments and equipment',
       ar: 'أدوات ومعدات جراحية عالية الجودة',

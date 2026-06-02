@@ -94,7 +94,7 @@ export const translations: Translations = {
   product_farm: { en: 'Farm Animal Products', ar: 'منتجات حيوانات المزرعة' },
 
   // Partners / Why Al-Marj Section — header
-  partners_badge: { en: 'The New Pillar', ar: 'الركيزة الجديدة' },
+  partners_badge: { en: 'AL-Rakiza AL-jadida', ar: 'الركيزة الجديدة' },
   partners_heading: { en: 'Why Al-Marj City?', ar: 'لماذا مدينة المرج؟' },
   partners_description: {
     en: 'Al-Rakiza Al-Jadida operates from a clear strategic vision aimed at bridging the gap between vast pastoral potential and available services, with Al-Marj as the launchpad and hub for its integrated veterinary services.',
