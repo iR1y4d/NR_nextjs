@@ -17,19 +17,41 @@ export function ContactForm() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  try {
+    const response = await fetch(
+      "https://formsubmit.co/ajax/9253e6684fd7ab79b5b1716d43b37ce0",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          message: formData.message,
+          _subject: "New Contact Message",
+        }),
+      }
+    );
 
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    setFormData({ name: '', phone: '', email: '', message: '' });
+    const data = await response.json();
 
-    setTimeout(() => setSubmitSuccess(false), 5000);
-  };
+    if (data.success === "true") {
+      setSubmitSuccess(true);
+      setFormData({ name: "", phone: "", email: "", message: "" });
+      setTimeout(() => setSubmitSuccess(false), 5000);
+    }
+  } catch (error) {
+    console.error("Submission error:", error);
+  }
 
+  setIsSubmitting(false);
+};
   return (
     <div className="bg-slate-50 rounded-3xl p-8 shadow-lg">
       <h3 className="text-2xl font-bold text-slate-800 mb-6">{t('contact_form_title')}</h3>
