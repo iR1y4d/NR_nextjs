@@ -24,6 +24,7 @@ export function ProductCard({ icon: Icon, title, image, description }: ProductCa
           src={image}
           alt={title}
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
 

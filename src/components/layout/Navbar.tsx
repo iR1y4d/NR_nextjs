@@ -33,6 +33,7 @@ export function Navbar() {
               src={isScrolled ? '/favicon.svg' : '/faviconw.svg'}
               alt="VetMed Logo"
               className="size-17 object-contain"
+              loading="lazy"
             />
           </div>
 

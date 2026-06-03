@@ -11,7 +11,7 @@ export function HeroSection() {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1628009368231-7cc9c2496e07?w=1920&h=1080&fit=crop')] bg-cover bg-center">
+      <div className="absolute inset-0 z-0')] bg-cover bg-center">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-blue-900/70" />
       </div>
 
