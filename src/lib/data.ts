@@ -103,7 +103,8 @@ export const products: Product[] = [
   {
     icon: Warehouse,
     title: 'product_farm',
-    image: '/images/cow.jpg',
+    image: 'https://images.unsplash.com/photo-1593768697824-f31b967e6c55?w=600&h=400&fit=crop',
+    // image: '/images/cow.jpg',
     description: {
       en: 'Specialized products for farm animals and livestock',
       ar: 'منتجات متخصصة لحيوانات المزرعة والماشية',

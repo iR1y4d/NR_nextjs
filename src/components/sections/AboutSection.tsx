@@ -24,9 +24,9 @@ export function AboutSection() {
           <motion.div variants={scaleIn} className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/images/sheep.jpg"
+                src="https://images.unsplash.com/photo-1504329779896-a7e131ac23af?&fit=crop"
                 alt="Veterinary professional"
-                className="w-full h-[500px] object-cover"
+                className="w-full h-[500px]  object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
             </div>
