@@ -1,830 +1,354 @@
-# دليل إصلاح مشاكل Lighthouse - موقع Rakiza Vet
+# دليل إصلاح Lighthouse ومشاكل الأداء - موقع الركيزة الجديدة
+# Lighthouse Fix & Performance Optimization Guide - Al-Rakiza Al-Jadida
 
-# Lighthouse Fix Guide - Rakiza Vet Website
-
-**تاريخ التقرير:** 3 يونيو 2026  
+**تاريخ التحديث:** 3 يونيو 2026  
 **النطاق:** rakiza-vet.ly  
-**الأداة:** Lighthouse 13.3.0 (Moto G Power محاكاة، شبكة 4G)
+**إطار العمل:** Next.js 16.2 (App Router)  
+**طريقة النشر:** تصدير ثابت (Static Export - `output: 'export'`) على GitHub Pages  
 
 ---
 
-## 📊 ملخص النتائج
-
-| الفئة                           | النتيجة | الحالة              |
-| ------------------------------- | ------- | ------------------- |
-| الأداء (Performance)            | 90/100  | ⚠️ يحتاج تحسين      |
-| إمكانية الوصول (Accessibility)  | 79/100  | ❌ يحتاج إصلاح عاجل |
-| أفضل الممارسات (Best Practices) | 96/100  | ⚠️ يحتاج تحسين      |
-| تحسين محركات البحث (SEO)        | 100/100 | ✅ ممتاز            |
+## 📊 ملخص حالة الأداء الحالية والتقييم
+| الفئة | النتيجة الحالية | الحالة | المستهدف |
+| :--- | :---: | :---: | :---: |
+| **الأداء (Performance)** | 90/100 | ⚠️ يحتاج تحسين | **98-100** |
+| **إمكانية الوصول (Accessibility)** | 79/100 | ❌ يحتاج إصلاح عاجل | **100** |
+| **أفضل الممارسات (Best Practices)** | 96/100 | ⚠️ يحتاج تحسين | **100** |
+| **تحسين محركات البحث (SEO)** | 100/100 | ✅ ممتاز | **100** |
 
 ---
 
-## 🚀 الأولوية 1: إصلاحات الأداء (Performance)
+## 🚀 1. إصلاحات الأداء (Performance Optimizations)
 
-### 1.1 تحسين ذاكرة التخزين المؤقت (Cache Policy)
+### 1.1 تحسين الصور عبر CDN وتجنب التحميل الكسول للعناصر المرئية الأولى (Above-the-Fold Images)
+> [!IMPORTANT]
+> بما أن المشروع يستخدم التصدير الثابت (`output: 'export'`)، فإن ميزة تحسين الصور التلقائية في Next.js تكون غير مفعلة (`unoptimized: true` في [next.config.ts](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/next.config.ts)).  
+> لحل هذه المشكلة وتحسين أداء تحميل الصور الخارجي (Unsplash)، نقوم بتحسينها مباشرة عبر خادم Unsplash CDN نفسه بدلاً من تحميل صور ثقيلة غير مضغوطة.
 
-**التوفير المتوقع:** 1,305 KiB  
-**الأثر:** FCP, LCP
+#### أ) تحسين روابط الصور في ملف البيانات [src/lib/data.ts](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/lib/data.ts)
+جميع صور Unsplash حالياً تُطلب بدون تحديد صيغة حديثة (WebP/AVIF). نقوم بإضافة معاملات تحويل الصيغة والجودة التلقائية (`auto=format&q=75`):
 
-#### المشكلة:
-
-الملفات التالية لا تحتوي على TTL للتخزين المؤقت:
-
-- ملفات JS chunks المختلفة
-- ملفات الخطوط (woff2)
-- ملفات CSS
-
-#### الحل:
-
-```javascript
-// في ملف vite.config.ts أو إعدادات الخادم
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        assetsDir: "assets",
-        assetFileNames: (assetInfo) => {
-          if (/\.(woff2?|ttf|eot)$/.test(assetInfo.name)) {
-            return "fonts/[name]-[hash][extname]";
-          }
-          return "assets/[name]-[hash][extname]";
-        },
-      },
-    },
+```diff
+// في src/lib/data.ts
+export const products: Product[] = [
+  {
+    icon: Syringe,
+    title: 'product_vaccines',
+-   image: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&h=400&fit=crop',
++   image: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=600&h=400&q=75',
+    description: { ... }
   },
-});
+  {
+    icon: HeartPulse,
+    title: 'product_surgical',
+-   image: 'https://images.unsplash.com/photo-1564732278233-674355414c2c?w=600&h=400&fit=crop',
++   image: 'https://images.unsplash.com/photo-1564732278233-674355414c2c?auto=format&fit=crop&w=600&h=400&q=75',
+    description: { ... }
+  },
+  // قم بتطبيق نفس التعديل على بقية روابط Unsplash في data.ts و AboutSection.tsx
+]
 ```
 
-```nginx
-# في إعدادات Nginx (إذا كان الخادم Nginx)
-location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-}
+#### ب) إصلاح شعار الموقع في شريط التنقل [src/components/layout/Navbar.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/layout/Navbar.tsx)
+شعار الموقع يقع في الجزء العلوي المرئي فوراً (Above-the-fold) ويؤثر مباشرة على مؤشرات FCP و LCP. استخدام `loading="lazy"` هنا يعتبر خطأ أداء.
 
-location ~* \.(woff2?|ttf|eot)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-}
-
-location ~* \.(js|css)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-}
+```diff
+// في src/components/layout/Navbar.tsx (السطر 32-37)
+            <img
+              src={isScrolled ? '/favicon.svg' : '/faviconw.svg'}
+              alt="VetMed Logo"
+              className="size-17 object-contain"
+-             loading="lazy"
++             loading="eager"
++             fetchPriority="high"
+            />
 ```
-
-**ملف للتعديل:** `public/.htaccess` أو إعدادات الخادم
 
 ---
 
-### 1.2 تحسين الصور (Image Optimization)
-
-**التوفير المتوقع:** 936 KiB  
-**الأثر:** LCP, FCP
-
-#### المشكلة:
-
-| الصورة | الحجم الحالي | التوفير | المشكلة |
-| ------ | ------------ | ------- | ------- |
-
-| Unsplash images | 116.7 KiB | 39.3 KiB | يمكن ضغطها أكثر |
+### 1.2 تحسين حجم حزمة الجافا سكريبت عبر ضغط حركات Framer Motion
+الموقع يعتمد على مكتبة `framer-motion` بشكل مكثف مما يزيد من حجم حزم الـ JavaScript الأولية. يمكننا تقليص حجم الحزمة بـ 45KB على الأقل باستخدام ميزة التحميل الكسول للحركات `LazyMotion`.
 
 #### الحل:
-
-**الخطوة 1: تحويل الصور إلى WebP/AVIF**
-
-````bash
-# تثبيت sharp لتحويل الصور
-npm install -D sharp
-
-
-
-
-
-### 1.3 تقليل JavaScript القديم (Legacy JavaScript)
-
-**التوفير المتوقع:** 13 KiB
-**الأثر:** LCP, FCP
-
-#### المشكلة:
-
-الكود يحتوي على polyfills لميزات مدعومة في المتصفحات الحديثة:
-
-- `Array.prototype.at`
-- `Array.prototype.flat`
-- `Array.prototype.flatMap`
-- `Object.fromEntries`
-- `Object.hasOwn`
-- `String.prototype.trimEnd`
-- `String.prototype.trimStart`
-
-#### الحل:
-
-**تحديث إعدادات Babel/TypeScript:**
-
-```json
-// في tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "noEmit": true
-  }
-}
-````
-
-```javascript
-// في vite.config.ts
-export default defineConfig({
-  build: {
-    target: "es2020",
-    minify: "esbuild",
-  },
-  esbuild: {
-    target: "es2020",
-  },
-});
-```
-
-**تحديث .browserslistrc:**
-
-```
-# .browserslistrc
->0.5%
-last 2 versions
-not dead
-not IE 11
-not op_mini all
-```
-
-**الملفات للتعديل:**
-
-- `tsconfig.json`
-- `vite.config.ts`
-- `.browserslistrc` (إنشاء إذا لم يوجد)
-
----
-
-### 1.4 إزالة طلبات حظر العرض (Render-Blocking Requests)
-
-**التوفير المتوقع:** 100ms  
-**الأثر:** LCP, FCP
-
-#### المشكلة:
-
-ملف CSS يحظر العرض:
-
-- `…chunks/0cnb16ltx9w8d.css` (8.9 KiB, 160ms)
-
-#### الحل:
-
-**الخطوة 1: تحميل CSS بشكل غير متزامن**
-
-```html
-<!-- في index.html -->
-<link
-  rel="preload"
-  href="/styles/critical.css"
-  as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
-/>
-<noscript>
-  <link rel="stylesheet" href="/styles/critical.css" />
-</noscript>
-```
-
-**الخطوة 2: استخدام CSS-in-JS للأنماط الحرجة**
-
+1. في ملف [src/app/layout.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/app/layout.tsx):
 ```tsx
-// في المكونات الرئيسية
-const criticalStyles = `
-  .hero-section { min-height: 100vh; }
-  .nav-bar { position: fixed; top: 0; }
-`;
+import { LazyMotion, domAnimation } from 'framer-motion';
 
-export function HeroSection() {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <style>{criticalStyles}</style>
-      {/* باقي المحتوى */}
-    </>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <body className={`${poppins.variable} ${cairo.variable} antialiased`}>
+        <LazyMotion features={domAnimation}>
+          <LanguageProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <FloatingWhatsApp />
+            <ScrollToTop />
+          </LanguageProvider>
+        </LazyMotion>
+      </body>
+    </html>
   );
 }
 ```
 
-**الخطوة 3: تقسيم CSS (Code Splitting)**
+2. استبدال استيراد `motion` بـ `m` في المكونات المتحركة (مثل `HeroSection`, `AboutSection`, `ProductsSection` إلخ):
+```diff
+- import { motion } from 'framer-motion';
++ import { m as motion } from 'framer-motion';
+```
+
+---
+
+### 1.3 الاتصال المسبق بخوادم الصور الخارجية (Preconnect)
+> [!NOTE]
+> لا نحتاج للاتصال المسبق بخوادم Google Fonts لأن Next.js يقوم تلقائياً باستضافة الخطوط محلياً عبر `next/font`. لكننا بحاجة للاتصال المسبق بخوادم صور Unsplash.
+
+نقوم بإضافة وسم `preconnect` لـ Unsplash داخل ملف [src/app/layout.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/app/layout.tsx):
 
 ```tsx
-// في vite.config.ts
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          styles: ["./src/styles/main.css"],
-        },
-      },
-    },
-  },
-});
-```
-
-**الملفات للتعديل:**
-
-- `index.html`
-- `vite.config.ts`
-- `src/main.tsx`
-
----
-
-### 1.5 تقليل حجم DOM
-
-**القيمة الحالية:** 550 عنصر  
-**الحد الموصى به:** < 1500 عنصر
-
-#### المشكلة:
-
-- الحد الأقصى للعناصر المضمّنة: 11
-- الحد الأقصى للعناصر الفرعية: 12
-
-#### الحل:
-
-**تبسيط الهيكل:**
-
-```tsx
-// ❌ قبل (هيكل معقد)
-<div className="flex">
-  <div className="w-14">
-    <svg className="lucide">
-      <path d="..." />
-    </svg>
-  </div>
-</div>
-
-// ✅ بعد (هيكل مبسط)
-<svg className="lucide w-14" aria-hidden="true">
-  <path d="..." />
-</svg>
-```
-
-**تقليل العناصر غير الضرورية:**
-
-```tsx
-// إزالة divs الزائدة
-// استخدام Fragment حيثما أمكن
-<>
-  <Component />
-  <Component />
-</>
-```
-
-**الملفات للتعديل:**
-
-- جميع مكونات `src/components/`
-
----
-
-### 1.6 تقليل JavaScript غير المستخدم (Unused JavaScript)
-
-**التوفير المتوقع:** 81 KiB  
-**الأثر:** LCP, FCP
-
-#### المشكلة:
-
-| الملف              | الحجم    | التوفير  |
-| ------------------ | -------- | -------- |
-| `0r8nt2o8muejo.js` | 49.2 KiB | 30.1 KiB |
-| `07lhk_q6pmm3r.js` | 69.3 KiB | 28.4 KiB |
-| `0gg3ci2dnjv1t.js` | 47.4 KiB | 22.4 KiB |
-
-#### الحل:
-
-**الخطوة 1: تفعيل Tree Shaking**
-
-```javascript
-// في vite.config.ts
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      treeshake: true,
-    },
-  },
-});
-```
-
-**الخطوة 2: استخدام Dynamic Imports**
-
-```tsx
-// استيراد ديناميكي للمكونات غير الحرجة
-const ContactForm = lazy(() => import("./ContactForm"));
-const MapSection = lazy(() => import("./MapSection"));
-
-// في المكون
-<Suspense fallback={<Loading />}>
-  <ContactForm />
-</Suspense>;
-```
-
-**الخطوة 3: إزالة المكتبات غير المستخدمة**
-
-```bash
-# تحليل حجم الحزمة
-npm install -D rollup-plugin-visualizer
-
-# في vite.config.ts
-import { visualizer } from 'rollup-plugin-visualizer';
-
-export default defineConfig({
-  plugins: [
-    visualizer({ open: true })
-  ]
-});
-```
-
-**الملفات للتعديل:**
-
-- `vite.config.ts`
-- `src/main.tsx`
-- `src/App.tsx`
-
----
-
-### 1.7 إضافة Preconnect للمصادر الخارجية
-
-**الأثر:** LCP
-
-#### المشكلة:
-
-لا توجد اتصالات مسبقة لأي مصادر خارجية
-
-#### الحل:
-
-```html
-<!-- في index.html، داخل <head> -->
-<link rel="preconnect" href="https://images.unsplash.com" crossorigin />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="dns-prefetch" href="https://maps.google.com" />
-```
-
-**الملفات للتعديل:**
-
-- `index.html`
-
----
-
-## ♿ الأولوية 2: إصلاحات إمكانية الوصول (Accessibility)
-
-### 2.1 أزرار بدون أسماء يمكن الوصول إليها
-
-**الأثر:** قارئات الشاشة
-
-#### المشكلة:
-
-```html
-<button
-  class="md:hidden p-2 rounded-lg transition-colors text-white hover:bg-white/20"
->
-  <!-- لا يوجد نص أو aria-label -->
-</button>
-```
-
-#### الحل:
-
-```tsx
-// ✅ إضافة aria-label
-<button
-  className="md:hidden p-2 rounded-lg transition-colors text-white hover:bg-white/20"
-  aria-label="فتح القائمة"
-  aria-expanded={isOpen}
-  aria-controls="mobile-menu"
->
-  <MenuIcon />
-</button>
-```
-
-**الملفات للتعديل:**
-
-- `src/components/Navbar.tsx`
-
----
-
-### 2.2 عناصر نموذج بدون تسميات (Labels)
-
-**الأثر:** قارئات الشاشة، التنقل بلوحة المفاتيح
-
-#### المشكلة:
-
-```html
-<input type="text" class="w-full px-4 py-3..." required />
-<input type="tel" class="w-full px-4 py-3..." required />
-<input type="email" class="w-full px-4 py-3..." required />
-<textarea rows="5" class="w-full px-4 py-3..." required />
-```
-
-#### الحل:
-
-```tsx
-// ✅ إضافة labels مرتبطة
-<div className="grid gap-6">
-  <div>
-    <label
-      htmlFor="name"
-      className="block text-sm font-medium text-slate-700 mb-2"
-    >
-      الاسم الكامل
-    </label>
-    <input
-      type="text"
-      id="name"
-      name="name"
-      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-      required
-      autoComplete="name"
-    />
-  </div>
-
-  <div>
-    <label
-      htmlFor="phone"
-      className="block text-sm font-medium text-slate-700 mb-2"
-    >
-      رقم الهاتف
-    </label>
-    <input
-      type="tel"
-      id="phone"
-      name="phone"
-      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-      required
-      autoComplete="tel"
-    />
-  </div>
-
-  <div>
-    <label
-      htmlFor="email"
-      className="block text-sm font-medium text-slate-700 mb-2"
-    >
-      البريد الإلكتروني
-    </label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-      required
-      autoComplete="email"
-    />
-  </div>
-
-  <div>
-    <label
-      htmlFor="message"
-      className="block text-sm font-medium text-slate-700 mb-2"
-    >
-      الرسالة
-    </label>
-    <textarea
-      id="message"
-      name="message"
-      rows={5}
-      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"
-      required
-    />
-  </div>
-</div>
-```
-
-**الملفات للتعديل:**
-
-- `src/components/ContactForm.tsx` أو قسم الاتصال في `App.tsx`
-
----
-
-### 2.3 iframe بدون عنوان
-
-**الأثر:** قارئات الشاشة
-
-#### المشكلة:
-
-```html
-<iframe
-  src="https://maps.google.com/maps?q=32.48538231156976,20.831425094790056&z=15&..."
-  class="absolute inset-0 w-full h-full"
-  loading="lazy"
-></iframe>
-```
-
-#### الحل:
-
-```tsx
-<iframe
-  src="https://maps.google.com/maps?q=32.48538231156976,20.831425094790056&z=15&output=embed"
-  className="absolute inset-0 w-full h-full"
-  title="موقعنا على الخريطة - العنوان: ليبيا"
-  loading="lazy"
-  aria-label="خريطة توضح موقع عيادتنا البيطرية"
-/>
-```
-
-**الملفات للتعديل:**
-
-- `src/components/ContactSection.tsx` أو قسم الخريطة
-
----
-
-### 2.4 روابط بدون أسماء مميزة
-
-**الأثر:** قارئات الشاشة، التنقل
-
-#### المشكلة:
-
-```html
-<a href="https://wa.me/218916110593" class="fixed bottom-8 right-8...">
-  <!-- أيقونة فقط بدون نص بديل -->
-</a>
-```
-
-#### الحل:
-
-```tsx
-<a
-  href="https://wa.me/218916110593"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-emerald-500 hover:bg-emerald-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
-  aria-label="تواصل معنا عبر واتساب - رقم: 218916110593"
->
-  <WhatsAppIcon className="w-7 h-7 text-white" />
-  <span className="sr-only">تواصل عبر واتساب</span>
-</a>
-```
-
-**الملفات للتعديل:**
-
-- `src/components/WhatsAppButton.tsx` أو المكون المماثل
-
----
-
-### 2.5 مشاكل التباين (Color Contrast)
-
-**الأثر:** المستخدمين ضعاف البصر
-
-#### المشكلة:
-
-1. رابط "Contact Us" - تباين غير كافٍ
-2. نص الفوتر `text-slate-500` - تباين غير كافٍ على الخلفية الداكنة
-
-#### الحل:
-
-```tsx
-// ✅ تحسين التباين
-// Contact Us button
-<a
-  href="#contact"
-  className="group flex items-center space-x-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
->
-  <span className="text-white">Contact Us</span>
-</a>
-
-// Footer text
-<footer className="bg-slate-900 text-white py-16">
-  <p className="text-slate-300 text-sm">
-    © 2026 AL-Rakiza AL-jadida. All rights reserved.
-  </p>
-  <p className="text-slate-200 text-base mt-2">
-    AL-Rakiza AL-jadida - Your trusted partner in veterinary equipment and medicines
-  </p>
-</footer>
-```
-
-**الملفات للتعديل:**
-
-- `src/components/Navbar.tsx`
-- `src/components/Footer.tsx`
-
-**أدوات التحقق من التباين:**
-
-- https://webaim.org/resources/contrastchecker/
-- نسبة التباين المطلوبة: 4.5:1 للنص العادي، 3:1 للنص الكبير
-
----
-
-## 🔒 الأولوية 3: أفضل الممارسات (Best Practices)
-
-### 3.1 إصلاح أخطاء المتصفح (404)
-
-### 3.2 إضافة سياسة أمان المحتوى (CSP)
-
-**الأثر:** الحماية من هجمات XSS
-
-#### الحل:
-
-```nginx
-# في إعدادات Nginx
-add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://images.unsplash.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com data:; frame-src https://maps.google.com; connect-src 'self';" always;
-```
-
-أو في `index.html`:
-
-```html
-<meta
-  http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com data:; frame-src https://maps.google.com;"
-/>
-```
-
-**الملفات للتعديل:**
-
-- إعدادات الخادم أو `index.html`
-
----
-
-### 3.3 إضافة HSTS Header
-
-**الأثر:** الحماية من هجمات downgrade
-
-#### الحل:
-
-```nginx
-# في إعدادات Nginx
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-```
-
-**الملفات للتعديل:**
-
-- إعدادات الخادم
-
----
-
-### 3.4 إضافة COOP Header
-
-**الأثر:** عزل النطاق
-
-#### الحل:
-
-```nginx
-# في إعدادات Nginx
-add_header Cross-Origin-Opener-Policy "same-origin" always;
-```
-
-**الملفات للتعديل:**
-
-- إعدادات الخادم
-
----
-
-### 3.5 إضافة X-Frame-Options أو CSP frame-ancestors
-
-**الأثر:** الحماية من clickjacking
-
-#### الحل:
-
-```nginx
-# في إعدادات Nginx
-add_header X-Frame-Options "SAMEORIGIN" always;
-# أو
-add_header Content-Security-Policy "frame-ancestors 'self';" always;
-```
-
-**الملفات للتعديل:**
-
-- إعدادات الخادم
-
----
-
-### 3.6 إضافة Trusted Types
-
-**الأثر:** الحماية من هجمات XSS المستندة إلى DOM
-
-#### الحل:
-
-```nginx
-# في إعدادات Nginx
-add_header Content-Security-Policy "require-trusted-types-for 'script';" always;
-```
-
-وفي الكود:
-
-```typescript
-// تفعيل Trusted Types
-if (window.trustedTypes && trustedTypes.createPolicy) {
-  trustedTypes.createPolicy("default", {
-    createHTML: (string) => string,
-    createScriptURL: (string) => string,
-  });
+// في src/app/layout.tsx
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+      </head>
+      <body className="...">
+         {/* ... */}
+      </body>
+    </html>
+  );
 }
 ```
 
-**الملفات للتعديل:**
+---
 
-- إعدادات الخادم
-- `src/main.tsx`
+### 1.4 سياسات التخزين المؤقت (Cache-Control) للمواقع الثابتة
+بما أن الموقع يتم تصديره كملفات ثابتة ويستضاف على GitHub Pages، فإن خوادم GitHub هي من تتحكم بالـ Headers الافتراضية.
+إذا تم استخدام **Cloudflare** كـ Reverse Proxy للموقع (وهو الخيار الأمثل والمنصوح به للنطاقات المخصصة)، يجب إعداد **Page Rules** أو **Cache Rules** كالتالي:
+
+1. **القاعدة الأولى لمجلد الأصول الثابتة الخاصة بـ Next.js:**
+   - **الرابط:** `https://rakiza-vet.ly/_next/static/*`
+   - **الإعدادات:** Edge Cache TTL = 1 Year, Browser Cache TTL = 1 Year.
+   - **رأس التحكم بالتخزين (Cache-Control Header):** `public, max-age=31536000, immutable`
+2. **القاعدة الثانية للصور والخطوط في مجلد `public`:**
+   - **الرابط:** `https://rakiza-vet.ly/*.{svg,png,jpg,jpeg,webp,woff2}`
+   - **الإعدادات:** Edge Cache TTL = 1 Month, Browser Cache TTL = 1 Month.
 
 ---
 
-## 🔍 الأولوية 4: تحسين محركات البحث (SEO)
+### 1.5 إصلاح الأخطاء البرمجية المؤثرة على الأداء
+في ملف [src/components/sections/HeroSection.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/sections/HeroSection.tsx) سطر 14، يوجد خطأ كتابي (Typo) في فئات التنسيق:
+```diff
+- <div className="absolute inset-0 z-0')] bg-cover bg-center">
++ <div className="absolute inset-0 z-0 bg-cover bg-center">
+```
 
-### 4.1 ملف robots.txt
+---
 
-**المشكلة:** ملف robots.txt غير صالح
+## ♿ 2. إصلاحات إمكانية الوصول (Accessibility)
 
-#### الحل:
+### 2.1 إضافة أسماء مميزة للأزرار التفاعلية (Accessible Names)
 
+#### أ) زر القائمة المتنقلة (Mobile Menu Button) في [src/components/layout/Navbar.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/layout/Navbar.tsx)
+```diff
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
++           aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
++           aria-expanded={isMobileMenuOpen}
+            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled
+              ? 'text-slate-700 hover:bg-slate-100'
+              : 'text-white hover:bg-white/20'
+              }`}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+```
+
+#### ب) زر الواتساب العائم في [src/components/layout/FloatingWhatsApp.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/layout/FloatingWhatsApp.tsx)
+```diff
+    <motion.a
+      href="https://wa.me/218916110593"
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      whileHover={{ scale: 1.1 }}
++     aria-label="تواصل معنا عبر واتساب"
+      className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-emerald-500 hover:bg-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-colors"
+    >
+      <MessageCircle className="w-7 h-7 text-white" />
++     <span className="sr-only">تواصل معنا عبر واتساب</span>
+    </motion.a>
+```
+
+---
+
+### 2.2 ربط التسميات (Labels) بحقول نماذج الاتصال
+في ملف [src/components/ui/ContactForm.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/ui/ContactForm.tsx)، يجب ربط عناصر `<label>` بمدخلاتها باستخدام `htmlFor` و `id` مع إضافة خاصية الإكمال التلقائي `autoComplete`.
+
+```diff
+// مثال لحقل الاسم الكامل
+          <div>
+-           <label className="block text-sm font-medium text-slate-700 mb-2">{t('form_name')}</label>
++           <label htmlFor="name-input" className="block text-sm font-medium text-slate-700 mb-2">{t('form_name')}</label>
+            <input
++             id="name-input"
+              type="text"
+              value={formData.name}
++             autoComplete="name"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="..."
+              required
+            />
+          </div>
+
+// حقل الهاتف
+          <div>
+-           <label className="block text-sm font-medium text-slate-700 mb-2">{t('form_phone')}</label>
++           <label htmlFor="phone-input" className="block text-sm font-medium text-slate-700 mb-2">{t('form_phone')}</label>
+            <input
++             id="phone-input"
+              type="tel"
+              value={formData.phone}
++             autoComplete="tel"
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="..."
+              required
+            />
+          </div>
+
+// حقل البريد الإلكتروني
+          <div>
+-           <label className="block text-sm font-medium text-slate-700 mb-2">{t('form_email')}</label>
++           <label htmlFor="email-input" className="block text-sm font-medium text-slate-700 mb-2">{t('form_email')}</label>
+            <input
++             id="email-input"
+              type="email"
+              value={formData.email}
++             autoComplete="email"
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="..."
+              required
+            />
+          </div>
+
+// حقل الرسالة
+          <div>
+-           <label className="block text-sm font-medium text-slate-700 mb-2">{t('form_message')}</label>
++           <label htmlFor="message-input" className="block text-sm font-medium text-slate-700 mb-2">{t('form_message')}</label>
+            <textarea
++             id="message-input"
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              rows={5}
+              className="..."
+              required
+            />
+          </div>
+```
+
+---
+
+### 2.3 إضافة عنوان وصفي لـ Google Maps Iframe
+في ملف [src/components/sections/ContactSection.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/sections/ContactSection.tsx):
+
+```diff
+                  <iframe
+                    src="https://maps.google.com/maps?q=32.48538231156976, 20.831425094790056&z=15&output=embed"
+                    className="absolute inset-0 w-full h-full"
+                    loading="lazy"
++                   title={language === 'en' ? "Google Maps showing our office location" : "خريطة جوجل توضح موقع مكتبنا"}
+                  />
+```
+
+---
+
+### 2.4 تحسين نسب التباين للألوان (Color Contrast)
+النصوص الرمادية الفاتحة على الخلفية الداكنة في التذييل (Footer) تفشل في اختبار التباين الأدنى (4.5:1).
+نقوم بتعديل فئات الألوان في [src/components/layout/Footer.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/components/layout/Footer.tsx):
+
+```diff
+// السطر 24
+- <p className="text-slate-400 text-sm leading-relaxed">
++ <p className="text-slate-300 text-sm leading-relaxed">
+
+// السطر 39
+- className="text-slate-400 hover:text-white transition-colors text-sm"
++ className="text-slate-300 hover:text-white transition-colors text-sm font-medium"
+
+// السطر 51
+- <ul className="space-y-3 text-slate-400 text-sm">
++ <ul className="space-y-3 text-slate-300 text-sm">
+
+// السطر 99
+- <p className="text-slate-500 text-sm">{t('footer_copyright')}</p>
++ <p className="text-slate-400 text-sm">{t('footer_copyright')}</p>
+```
+
+---
+
+## 🔒 3. أفضل الممارسات (Best Practices)
+
+بما أن الموقع مستضاف بالكامل كملفات ثابتة، فإن إعدادات الـ Security Headers (مثل CSP, HSTS, X-Frame-Options) لا يمكن تحديدها من خلال ملف `next.config.ts` في حالة التصدير الثابت، بل يجب تكوينها من جهة خادم الاستضافة أو خدمات الحماية مثل **Cloudflare**:
+
+1. **Content Security Policy (CSP):**
+   إعداد رأس CSP لتأمين الموقع مع السماح لمصادر خارجية موثوقة (Unsplash و Google Maps):
+   ```http
+   default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com; frame-src https://maps.google.com https://www.google.com; connect-src 'self' https://formsubmit.co;
+   ```
+2. **HTTP Strict Transport Security (HSTS):**
+   تفعيلها عبر إعدادات Cloudflare SSL/TLS -> Edge Certificates -> **HTTP Strict Transport Security (HSTS)**.
+3. **أمن النوافذ (Cross-Origin-Opener-Policy):**
+   إضافة رأس `Cross-Origin-Opener-Policy: same-origin` عبر قواعد التحويل في Cloudflare.
+
+---
+
+## 🔍 4. تحسين محركات البحث (SEO)
+
+### 4.1 إضافة الرابط الأساسي Canonical Link بطريقة Next.js الرسمية
+نقوم بإضافة الرابط الأساسي إلى كائن الميتا في ملف [src/app/layout.tsx](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/src/app/layout.tsx):
+
+```diff
+export const metadata: Metadata = {
+  title: 'شركة الركيزة الجديدة | AL Rakiza AL Jadida Company',
+  description:
+    'Al Rakiza AL Jadida Company – Integrated Veterinary Solutions. شركة الركيزة الجديدة - حلول بيطرية متكاملة.',
+  keywords:
+    'veterinary equipment, veterinary medicines, animal health, vet supplies, pet care, veterinary imports',
+  authors: [{ name: 'VetMed Imports' }],
+  icons: {
+    icon: '/favicon.svg',
+  },
+  other: {
+    'theme-color': '#3B82F6',
+  },
++ alternates: {
++   canonical: 'https://rakiza-vet.ly/',
++ },
+};
+```
+
+### 4.2 ملف robots.txt
+يجب إنشاء الملف في المسار المخصص للملفات العامة [public/robots.txt](file:///c:/Users/Admin/Desktop/bilingual-veterinary-equipment-website-nextjs/nextjs-temp/public/robots.txt):
 ```txt
-# public/robots.txt
 User-agent: *
 Allow: /
 
 Sitemap: https://rakiza-vet.ly/sitemap.xml
-
-# حظر مجلدات غير ضرورية
-Disallow: /admin/
-Disallow: /api/
 ```
 
-**الملفات للتعديل:**
-
-- إنشاء `public/robots.txt`
-
 ---
 
-### 4.2 رابط rel=canonical
-
-**المشكلة:** رابط canonical غير صالح أو مفقود
-
-#### الحل:
-
-```html
-<!-- في index.html -->
-<head>
-  <link rel="canonical" href="https://rakiza-vet.ly/" />
-</head>
-```
-
-أو ديناميكيًا في React:
-
-```tsx
-// في App.tsx أو مكون Helmet
-<Helmet>
-  <link rel="canonical" href="https://rakiza-vet.ly/" />
-</Helmet>
-```
-
-**الملفات للتعديل:**
-
-- `index.html` أو `src/App.tsx`
-
----
-
-## 📋 قائمة التحقق النهائية
-
-### قبل النشر:
-
-- [ ] تم إعداد Cache-Control headers
-- [ ] تم إضافة preconnect للمصادر الخارجية
-- [ ] تم تقليل JavaScript غير المستخدم
-- [ ] جميع الأزرار تحتوي على aria-label
-- [ ] جميع حقول النموذج تحتوي على labels
-- [ ] جميع iframes تحتوي على title
-- [ ] جميع الروابط لها أسماء مميزة
-- [ ] تم التحقق من تباين الألوان (4.5:1 على الأقل)
-- [ ] تم إصلاح جميع أخطاء 404
-- [ ] تم إضافة CSP header
-- [ ] تم إضافة HSTS header
-- [ ] تم إضافة COOP header
-- [ ] تم إضافة X-Frame-Options
-- [ ] ملف robots.txt موجود وصالح
-- [ ] رابط canonical موجود
-
-### أدوات التحقق:
-
-1. **Lighthouse** - https://pagespeed.web.dev/
-2. **WAVE** - https://wave.webaim.org/
-3. **axe DevTools** - إضافة المتصفح
-4. **WebAIM Contrast Checker** - https://webaim.org/resources/contrastchecker/
-5. **Google Search Console** - للتحقق من SEO
-
----
-
-## 🎯 جدول زمني مقترح
-
-| المرحلة | المهام                        | المدة المتوقعة |
-| ------- | ----------------------------- | -------------- |
-| 1       | إصلاحات إمكانية الوصول الحرجة | 1-2 يوم        |
-| 2       | تحسين الصور والـ Cache        | 1 يوم          |
-| 3       | تحسين JavaScript و CSS        | 1-2 يوم        |
-| 4       | إعدادات الأمان (Headers)      | 1 يوم          |
-| 5       | اختبار شامل والتحقق           | 1 يوم          |
-
-**الإجمالي:** 5-7 أيام
-
----
-
-## 📞 الدعم
-
-لأي استفسارات أو مشاكل تقنية، يرجى التواصل مع فريق التطوير.
-
-**آخر تحديث:** 3 يونيو 2026
+## 📋 قائمة التحقق النهائية قبل النشر (Final Checklist)
+- [ ] تعديل روابط Unsplash في `data.ts` و `AboutSection.tsx` لإضافة معاملات `auto=format&q=75`.
+- [ ] إزالة `loading="lazy"` وإضافة `loading="eager"` لشعار الموقع في `Navbar.tsx`.
+- [ ] تطبيق `LazyMotion` لتقليل حجم حزمة جافا سكريبت الخاصة بالحركات.
+- [ ] ربط جميع وسوم `<label>` بمعرفات المدخلات `id` في نموذج الاتصال.
+- [ ] إضافة `title` للـ `iframe` الخاص بالخريطة.
+- [ ] تحسين ألوان نصوص التذييل (Footer) لزيادة تباين القراءة.
+- [ ] تفعيل إعدادات الأمان والتخزين المؤقت عبر Cloudflare للنطاق المباشر.
+- [ ] التحقق من وجود وسم `canonical` وملف `robots.txt`.
